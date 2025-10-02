@@ -1,6 +1,7 @@
 import streamlit as st
 import scipy.stats
 import time
+import pandas as pd
 
 # estas son las variables de estado que se conservan cuando Streamlit vuelve a ejecutar este script
 if 'experiment_no' not in st.session_state:
