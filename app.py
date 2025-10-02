@@ -2,6 +2,12 @@ import streamlit as st
 import scipy.stats
 import time
 
+# estas son las variables de estado que se conservan cuando Streamlit vuelve a ejecutar este script
+if 'experiment_no' not in st.session_state:
+    st.session_state['experiment_no'] = 0
+if 'df_experiment_results' not in st.session_state:
+    st.session_State['df_Experiment_results'] = pd.DataFrame(columns=['número', 'iteraciones', 'media'])
+
 st.header('Lanzar una moneda')
 
 chart = st.line_chart([0.5])
@@ -28,5 +34,16 @@ start_button = st.button('Ejecutar')
 
 if start_button:
     st.write(f'Experimento con {number_of_trials} intentos en curso.')
+    st.session_state['experiment_no'] += 1
     mean = toss_coin(number_of_trials)
-    st.write(f'La media final es: {mean}')
+    st.session_state['df_experiment_results'] = pd.concat([
+        st.session_state['df_experiment_results'],
+        pd.DataFrame(data=[[st.session_state['experiment_no'],
+                            number_of_trials,
+                            mean]],
+                     columns=['no', 'iteraciones', 'media'])
+        ],
+        axis=0)
+    st.session_state['df_experiment_results'] = st.session_state['df_experiment_results'].reset_index(drop=True)
+
+st.write(st.session_state['df_experiment_results'])
